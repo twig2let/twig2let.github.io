@@ -1,9 +1,12 @@
-# Docker, KeystoneJS, MongoDB and Yarn
+# Docker, KeystoneJS, MongoDB, RoboMongo and Yarn
 
 Without a Yarn specific _keystone-generator_ it is difficult to scaffold a new KeystoneJS project without _npm_. For simplicity, we will generate the initial project
 which uses `npm`, then delete the node_modules dir and finally run `yarn`.
 
+___
+
 ## Generate a New KeystoneJS Project
+
 
 The recommended way to generate a KeystoneJS project is via the Yeoman KeystoneJS generator, _generator-keystone_. The generator requires some manual intervention and thus the first evolution of our dockerfile will enable us to ssh in and intervene accordingly:
 
@@ -30,31 +33,38 @@ services:
 ```
 
 1. Build it
-```
-$ docker-compose build
-```
+
+    ```
+    $ docker-compose build
+    ```
 
 2. Run it, we mount the current directory and all the project files generated in the container will sync with our local directory.
-```
-$ docker run -it --rm -v $PWD:/home/app {IMAGE_ID} bash
-```
+
+    ```
+    $ docker run -it --rm -v $PWD:/home/app {IMAGE_ID} bash
+    ```
 
 3. Generate the project, this will generate the starter project for us. Watch the logs after executing the following command, as soon the `creates...` finish, kill the command with `ctrl+c`. We don't want our dependencies via npm!
-```
-$ yo keystone
-```
+
+    ```
+    $ yo keystone
+    ```
 
 4. Remove any `npm` installed assets
-```
-$ npm cache clean && rm -r {node_modules/,.node-gyp/,.config}
-```
+
+    ```
+    $ npm cache clean && rm -r {node_modules/,.node-gyp/,.config}
+    ```
 
 5. Kill it
-```
-ctrl + d
-```
+
+    ```
+    ctrl + d
+    ```
+___
 
 ## Install dependencies with Yarn
+
 
 Now we need to update our dockerfile to re-install the project dependencies, albeit with Yarn this time! Also, we can ditch Yeoman.
 
@@ -106,6 +116,8 @@ $ docker-compose build --no-cache && docker-compose up
 
 You should notice at this stage, we're missing a mongo service! Let's include it.
 
+___
+
 ## Add a mongo service
 
 Update the docker-compose.yml to include our Mongo service
@@ -129,22 +141,30 @@ services:
       - "3000:3000"
   my-db-service:
     image: mongo:latest
+    expose:
+      - "27017"
+    ports:
+      - "27017:27017"
 ```
 
-1. We'll need to let Keystone where the database is. Add the following line to .env
+1. We'll need to let Keystone know where the database is. Add the following line to .env
 
-```
-MONGO_URI=my-db-service
-```
+    ```
+    MONGO_URI=my-db-service
+    ```
 
 2. Bring the services up
-```
-$ docker-compose up -d
-```
+
+    ```
+    $ docker-compose up -d
+    ```
 
 3. Clear up any dangling images
 
-```
-docker rmi $(docker images --quiet --filter "dangling=true")
-```
+    ```
+    docker rmi $(docker images --quiet --filter "dangling=true")
+    ```
 
+## Mongo and RoboMongo
+
+In RoboMonogo, create a __Direct Connection__ on `127.0.0.1:27017`
