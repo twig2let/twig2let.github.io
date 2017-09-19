@@ -27,7 +27,7 @@ version: '2'
 services:
   back:
     image: nginx
-    command: /bin/bash nginx
+    command: nginx -g 'daemon off;'
 ```
 
 Start the services with a `docker-compose up`, **back** service first and then the **front** service; you should see the following output:
@@ -49,7 +49,8 @@ ___
 [`user-defined networks`](https://docs.docker.com/engine/userguide/networking/#user-defined-networks) to the rescue! As the official Docker documentation says:
 
 ```
-"It is recommended to use user-defined bridge networks to control which containers can communicate with each other, and also to enable automatic DNS resolution of container names to IP addresses"
+"It is recommended to use user-defined bridge networks to control which containers can communicate with
+each other, and also to enable automatic DNS resolution of container names to IP addresses"
 ```
 
 ### Creating a custom bridge network
@@ -93,7 +94,7 @@ ___
       external: true
     ```
 
-    We've just specified the network we would like to user, `my-custom-network`.
+    We've just specified the network we would like our docker-compose to use, `my-custom-network`.
 
     *NOTE: `external:true` specifies that the network (`my-custom-network`) has been created outside of compose and therefore docker-compose should not attempt to create it. It will also throw and error if the network does not exist.*
 
