@@ -1,3 +1,7 @@
+### Rails
+
+- [Setup a New Rails Project With Docker](/rails/rails_createANewRailsProjectWithDocker.md)
+-
 ### Docker
 
 - [Create a MongoDB Container](/docker/docker_creatingAMongoContainer.md)
